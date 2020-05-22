@@ -27,25 +27,25 @@ export default class ClusteringVisualizer extends Component {
 
         //var data_points = []; // holds all data points
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
             data_points.push({
-                x: (Math.random() * 250) + 10,
-                y: (Math.random() * 250) + 10,
+                x: (Math.random() * 300) + 10,
+                y: (Math.random() * 300) + 10,
                 id: 0 // represents an unassigned point (just used for initialization)
             });
         }
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 75; i++) {
             data_points.push({
                 x: 740 - (Math.random() * 300),
-                y: (Math.random() * 250) + 10,
+                y: (Math.random() * 400) + 10,
                 id: 0
             });
         }
 
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 80; i++) {
             data_points.push({
-                x: 250 + (Math.random() * 250),
+                x: 100 + (Math.random() * 500),
                 y: 740 - (Math.random() * 300),
                 id: 0
             });
@@ -180,6 +180,59 @@ export default class ClusteringVisualizer extends Component {
 
     stepThrough() {
         console.log("STEP");
+
+        const data_points = this.state.data_points;
+        const centroids = this.state.centroids;
+
+        // k-means algorithm step
+
+        let distance = (pos1, pos2) => {
+            let dx = pos2.x - pos1.x;
+            let dy = pos2.y - pos1.y;
+            return Math.sqrt((dx*dx) + (dy*dy)) ;
+        }
+
+
+        // update data point id's
+
+        data_points.forEach((data_point, i) => {
+            let min_dist = 1000;
+            let prev_id = data_point.id;
+
+            centroids.forEach((centroid, i) => {
+                if (data_point.id === 0 || distance(data_point, centroid) < min_dist) {
+                    min_dist = distance(data_point, centroid);
+                    data_point.id = centroid.id;
+                }
+            });
+        });
+
+        // update centroid positions
+
+        centroids.forEach((centroid, i) => {
+            let xTotal = 0;
+            let yTotal = 0;
+            let point_count = 0;
+
+            data_points.forEach((data_point, i) => {
+                if (data_point.id === centroid.id) {
+                    point_count++;
+                    xTotal += data_point.x;
+                    yTotal += data_point.y;
+                }
+            });
+
+            let xAvg = xTotal/point_count;
+            let yAvg = yTotal/point_count;
+
+            centroid.x = xAvg;
+            centroid.y = yAvg;
+        });
+
+        this.setState({
+            data_points : data_points,
+            centroids: centroids
+        });
     }
 
     runAlgorithm() {
