@@ -7,7 +7,8 @@ export default class ClusteringVisualizer extends Component {
         this.state = {
             // make sure all the data points and centroids and stuff are saved here
             data_points : [],
-            centroids : []
+            centroids : [],
+            initial_centroids : []
         };
 
         this.resetClusters = this.resetClusters.bind(this);
@@ -16,21 +17,16 @@ export default class ClusteringVisualizer extends Component {
     }
 
     componentDidMount() {
-        //const canvas = document.getElementById('myCanvas');
-        //const ctx = canvas.getContext('2d');
         console.log("Canvas mounted");
-
 
         // Generate data points
 
-        const data_points = this.state.data_points.slice(); // create copy of data_points array
-
-        //var data_points = []; // holds all data points
+        const data_points = []; // will hold all data points
 
         for (let i = 0; i < 100; i++) {
             data_points.push({
-                x: (Math.random() * 300) + 10,
-                y: (Math.random() * 300) + 10,
+                x: (Math.random() * 350) + 10,
+                y: (Math.random() * 500) + 10,
                 id: 0 // represents an unassigned point (just used for initialization)
             });
         }
@@ -55,8 +51,7 @@ export default class ClusteringVisualizer extends Component {
 
         // Generate centroids
 
-        const centroids = this.state.centroids.slice();
-        //var centroids = []; // holds all centroid
+        const centroids = []; // holds all centroids
 
         for (let i = 0; i < 3; i++) {
             centroids.push({
@@ -66,93 +61,24 @@ export default class ClusteringVisualizer extends Component {
             });
         }
 
-
-
-        // k-means algorithm
-
-        /*let distance = (pos1, pos2) => {
-            let dx = pos2.x - pos1.x;
-            let dy = pos2.y - pos1.y;
-            return Math.sqrt((dx*dx) + (dy*dy)) ;
-        }
-
-        let anything_changed = false;
-
-        do {
-            anything_changed = false;
-
-            // update data point id's
-
-            data_points.forEach((data_point, i) => {
-                let min_dist = 1000;
-                let prev_id = data_point.id;
-
-                centroids.forEach((centroid, i) => {
-                    if (data_point.id === 0 || distance(data_point, centroid) < min_dist) {
-                        min_dist = distance(data_point, centroid);
-                        data_point.id = centroid.id;
-                    }
-                });
-
-                if (data_point.id !== prev_id) {
-                    anything_changed = true;
-                }
-            });
-
-            // update centroid positions
-
-            centroids.forEach((centroid, i) => {
-                let xTotal = 0;
-                let yTotal = 0;
-                let point_count = 0;
-
-                data_points.forEach((data_point, i) => {
-                    if (data_point.id === centroid.id) {
-                        point_count++;
-                        xTotal += data_point.x;
-                        yTotal += data_point.y;
-                    }
-                });
-
-                let xAvg = xTotal/point_count;
-                let yAvg = yTotal/point_count;
-
-                centroid.x = xAvg;
-                centroid.y = yAvg;
-            });
-
-        } while(anything_changed);*/
-
-
-        // Draw data points and centroids
-
-        /*var cluster_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF"];
-
-        data_points.forEach((item, i) => {
-            ctx.fillStyle = cluster_colors[item.id];
-            ctx.fillRect(item.x, item.y, 10, 10);
+        const initial_centroids = centroids.map((centroid) => { // this stores a copy of the starting centroids to use on reset
+            return {...centroid};
         });
-
-        ctx.lineWidth = 3;
-
-        centroids.forEach((item, i) => {
-            ctx.strokeStyle = cluster_colors[item.id];
-            ctx.strokeRect(item.x, item.y, 15, 15);
-        });*/
-
 
         this.setState({
             centroids: centroids,
-            data_points: data_points
+            data_points: data_points,
+            initial_centroids : initial_centroids
         });
     }
 
     componentDidUpdate() {
+        console.log(this.state.initial_centroids);
 
         // this acts as the draw function
 
-        const data_points = this.state.data_points;
-        const centroids = this.state.centroids;
+        const data_points = this.state.data_points.slice();
+        const centroids = this.state.centroids.slice();
 
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
@@ -174,15 +100,32 @@ export default class ClusteringVisualizer extends Component {
         });
     }
 
-    resetClusters() {
-        console.log(this.state);
+    resetClusters() { // resets algorithm with original starting centroids
+        console.log("reset");
+
+        const data_points = this.state.data_points.map((data_point) => {
+            return Object.assign({}, data_point, {id: 0});
+        });
+
+        const initial_centroids = this.state.initial_centroids.map((centroid) => {
+            return {...centroid}
+        });
+
+        this.setState({
+            data_points: data_points,
+            centroids: initial_centroids
+        });
+    }
+
+    pickNewCentroids() { //resets algorithm with new centroids
+        
     }
 
     stepThrough() {
         console.log("STEP");
 
-        const data_points = this.state.data_points;
-        const centroids = this.state.centroids;
+        const data_points = this.state.data_points.slice();
+        const centroids = this.state.centroids.slice();
 
         // k-means algorithm step
 
@@ -197,7 +140,6 @@ export default class ClusteringVisualizer extends Component {
 
         data_points.forEach((data_point, i) => {
             let min_dist = 1000;
-            let prev_id = data_point.id;
 
             centroids.forEach((centroid, i) => {
                 if (data_point.id === 0 || distance(data_point, centroid) < min_dist) {
@@ -231,15 +173,15 @@ export default class ClusteringVisualizer extends Component {
 
         this.setState({
             data_points : data_points,
-            centroids: centroids
+            centroids: centroids,
         });
     }
 
     runAlgorithm() {
         console.log("RUN");
 
-        const data_points = this.state.data_points;
-        const centroids = this.state.centroids;
+        const data_points = this.state.data_points.slice();
+        const centroids = this.state.centroids.slice();
 
         // k-means algorithm
 
@@ -310,6 +252,9 @@ export default class ClusteringVisualizer extends Component {
                 </canvas>
                 <button onClick={this.resetClusters}>
                     Reset
+                </button>
+                <button onClick={this.setNewCentroids}>
+                    New Centroids
                 </button>
                 <button onClick={this.stepThrough}>
                     Step
