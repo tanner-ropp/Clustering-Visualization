@@ -14,6 +14,7 @@ export default class ClusteringVisualizer extends Component {
         this.resetClusters = this.resetClusters.bind(this);
         this.runAlgorithm = this.runAlgorithm.bind(this);
         this.stepThrough = this.stepThrough.bind(this);
+        this.setNewCentroids = this.setNewCentroids.bind(this);
     }
 
     componentDidMount() {
@@ -117,15 +118,36 @@ export default class ClusteringVisualizer extends Component {
         });
     }
 
-    pickNewCentroids() { //resets algorithm with new centroids
-        
+    setNewCentroids() { //resets algorithm with new centroids
+        console.log("new centroids");
+
+        const data_points = this.state.data_points.map((data_point) => {
+            return Object.assign({}, data_point, {id: 0});
+        });
+
+        const centroids = []; // holds all centroids
+
+        for (let i = 0; i < 3; i++) {
+            centroids.push({
+                x: (Math.random() * 730) + 10,
+                y: (Math.random() * 730) + 10,
+                id: i + 1 // this is the cluster id/number.  I should figure out how to make this non-writeable/constant
+            });
+        }
+
+        const initial_centroids = centroids.map((centroid) => { // this stores a copy of the starting centroids to use on reset
+            return {...centroid};
+        });
+
+        this.setState({
+            data_points: data_points,
+            centroids: centroids,
+            initial_centroids: initial_centroids
+        });
     }
 
     stepThrough() {
         console.log("STEP");
-
-        const data_points = this.state.data_points.slice();
-        const centroids = this.state.centroids.slice();
 
         // k-means algorithm step
 
@@ -134,6 +156,14 @@ export default class ClusteringVisualizer extends Component {
             let dy = pos2.y - pos1.y;
             return Math.sqrt((dx*dx) + (dy*dy)) ;
         }
+
+        const data_points = this.state.data_points.map((data_point) => {
+            return {...data_point}
+        });
+
+        const centroids = this.state.centroids.map((centroid) => {
+            return {...centroid}
+        });
 
 
         // update data point id's
@@ -173,15 +203,12 @@ export default class ClusteringVisualizer extends Component {
 
         this.setState({
             data_points : data_points,
-            centroids: centroids,
+            centroids: centroids
         });
     }
 
     runAlgorithm() {
         console.log("RUN");
-
-        const data_points = this.state.data_points.slice();
-        const centroids = this.state.centroids.slice();
 
         // k-means algorithm
 
@@ -190,6 +217,14 @@ export default class ClusteringVisualizer extends Component {
             let dy = pos2.y - pos1.y;
             return Math.sqrt((dx*dx) + (dy*dy)) ;
         }
+
+        const data_points = this.state.data_points.map((data_point) => {
+            return {...data_point}
+        });
+
+        const centroids = this.state.centroids.map((centroid) => {
+            return {...centroid}
+        });
 
         let anything_changed = false;
 
