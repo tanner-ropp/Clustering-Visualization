@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import {Navbar, Nav, Container, Row, Col, Button} from 'react-bootstrap'
 import './ClusteringVisualizer.css';
 
 export default class ClusteringVisualizer extends Component {
@@ -24,18 +25,18 @@ export default class ClusteringVisualizer extends Component {
 
         const data_points = []; // will hold all data points
 
-        for (let i = 0; i < 100; i++) {
+        /*for (let i = 0; i < 100; i++) {
             data_points.push({
-                x: (Math.random() * 350) + 10,
-                y: (Math.random() * 500) + 10,
+                x: (Math.random() * 400) + 10,
+                y: (Math.random() * 350) + 10,
                 id: 0 // represents an unassigned point (just used for initialization)
             });
         }
 
         for (let i = 0; i < 75; i++) {
             data_points.push({
-                x: 740 - (Math.random() * 300),
-                y: (Math.random() * 400) + 10,
+                x: 740 - (Math.random() * 200),
+                y: (Math.random() * 350) + 10,
                 id: 0
             });
         }
@@ -46,7 +47,7 @@ export default class ClusteringVisualizer extends Component {
                 y: 740 - (Math.random() * 300),
                 id: 0
             });
-        }
+        }*/
 
 
 
@@ -74,8 +75,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     componentDidUpdate() {
-        console.log(this.state.initial_centroids);
-
         // this acts as the draw function
 
         const data_points = this.state.data_points.slice();
@@ -89,15 +88,23 @@ export default class ClusteringVisualizer extends Component {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         data_points.forEach((item, i) => {
+            // circle drawing code from https://www.html5canvastutorials.com/tutorials/html5-canvas-circles/
             ctx.fillStyle = cluster_colors[item.id];
-            ctx.fillRect(item.x, item.y, 10, 10);
+            ctx.strokeStyle = cluster_colors[item.id];
+
+            ctx.fillRect(item.x - 5, item.y - 5, 10, 10);
+            /*ctx.beginPath();
+            ctx.arc(item.x, item.y, 4, 0, 2 * Math.PI, false);
+            ctx.fill();
+            ctx.lineWidth = 1;
+            ctx.stroke();*/
         });
 
         ctx.lineWidth = 3;
 
         centroids.forEach((item, i) => {
             ctx.strokeStyle = cluster_colors[item.id];
-            ctx.strokeRect(item.x, item.y, 15, 15);
+            ctx.strokeRect(item.x - 7.5, item.y - 7.5, 15, 15);
         });
     }
 
@@ -126,13 +133,26 @@ export default class ClusteringVisualizer extends Component {
         });
 
         const centroids = []; // holds all centroids
+        const centroid_options = this.state.data_points.map((data_point) => { // this stores a copy of the available datapoints to choose as centroids
+            return {...data_point};
+        });
 
         for (let i = 0; i < 3; i++) {
+            var rand_index = Math.floor(Math.random()*centroid_options.length);
+            var centroid_option = centroid_options[rand_index];
+            console.log(centroid_options);
+            console.log(centroid_option);
+            centroid_options.splice(rand_index, 1); // remove the data point so it can't be selected again
             centroids.push({
+                x: centroid_option.x,
+                y: centroid_option.y,
+                id: i + 1
+            })
+            /*centroids.push({
                 x: (Math.random() * 730) + 10,
                 y: (Math.random() * 730) + 10,
                 id: i + 1 // this is the cluster id/number.  I should figure out how to make this non-writeable/constant
-            });
+            });*/
         }
 
         const initial_centroids = centroids.map((centroid) => { // this stores a copy of the starting centroids to use on reset
@@ -282,21 +302,52 @@ export default class ClusteringVisualizer extends Component {
     render() {
         return (
             <div>
-                <canvas id="myCanvas" width="750" height="750">
-                    Your browser does not support the canvas tag.
-                </canvas>
-                <button onClick={this.resetClusters}>
-                    Reset
-                </button>
-                <button onClick={this.setNewCentroids}>
-                    New Centroids
-                </button>
-                <button onClick={this.stepThrough}>
-                    Step
-                </button>
-                <button onClick={this.runAlgorithm}>
-                    Run
-                </button>
+                <Navbar className="custom-navbar" bg="dark" variant="dark">
+                    <Navbar.Brand>
+                        K-means Clustering Visualizer
+                    </Navbar.Brand>
+                    <div className="button-dashboard">
+                        <Button variant="outline-light" onClick={this.resetClusters}>
+                            Reset
+                        </Button>{' '}
+                        <Button variant="outline-light" onClick={this.setNewCentroids}>
+                            New Centroids
+                        </Button>{' '}
+                        <Button variant="outline-light" onClick={this.stepThrough}>
+                            Step
+                        </Button>{' '}
+                        <Button variant="outline-success" onClick={this.runAlgorithm}>
+                            Run
+                        </Button>
+                    </div>
+                </Navbar>
+                <section>
+                    <canvas id="myCanvas" width="750" height="750" onMouseDown={(e) => {
+                        const data_points = this.state.data_points.map((data_point) => {
+                            return {...data_point}
+                        });
+
+                        const canvas = document.getElementById('myCanvas');
+                        var rect = canvas.getBoundingClientRect();
+
+                        data_points.push({
+                            x: e.clientX - rect.left - 4, // custom offset to make the square at the point of thr cursor
+                            y: e.clientY - rect.top - 4,
+                            id: 0
+                        });
+
+                        this.setState({
+                            data_points: data_points
+                        })
+                        }}>
+                        Your browser does not support the canvas tag.
+                    </canvas>
+                </section>
+                <footer className="bg-dark text-muted">
+                    <div className="text-center">
+                        - Tanner Ropp, 2020 -
+                    </div>
+                </footer>
             </div>
         )
     }
