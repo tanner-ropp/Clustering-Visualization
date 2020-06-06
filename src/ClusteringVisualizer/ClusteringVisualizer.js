@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Navbar, Nav, Container, Row, Col, Button} from 'react-bootstrap'
+import {Navbar, Nav, Container, Row, Col, Button, InputGroup, FormControl} from 'react-bootstrap'
 import './ClusteringVisualizer.css';
 
 export default class ClusteringVisualizer extends Component {
@@ -9,13 +9,20 @@ export default class ClusteringVisualizer extends Component {
             // make sure all the data points and centroids and stuff are saved here
             data_points : [],
             centroids : [],
-            initial_centroids : []
+            initial_centroids : [],
+            k: 5
         };
 
+        // initialize refs
+        //this.clusterInput = React.createRef();
+
+        // bind methods
         this.resetClusters = this.resetClusters.bind(this);
         this.runAlgorithm = this.runAlgorithm.bind(this);
         this.stepThrough = this.stepThrough.bind(this);
         this.setNewCentroids = this.setNewCentroids.bind(this);
+        this.handleDecrement = this.handleDecrement.bind(this);
+        this.handleIncrement = this.handleIncrement.bind(this);
     }
 
     componentDidMount() {
@@ -55,7 +62,7 @@ export default class ClusteringVisualizer extends Component {
 
         const centroids = []; // holds all centroids
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < this.state.k; i++) {
             centroids.push({
                 x: (Math.random() * 730) + 10,
                 y: (Math.random() * 730) + 10,
@@ -83,7 +90,7 @@ export default class ClusteringVisualizer extends Component {
         const canvas = document.getElementById('myCanvas');
         const ctx = canvas.getContext('2d');
 
-        var cluster_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF"];
+        var cluster_colors = ["#000000", "#FF0000", "#00FF00", "#0000FF", "#FF00FF", "#FF9900", "#00FFFF", "#9900FF", "#980000", "#666666", "#4A86E8"];
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -137,7 +144,7 @@ export default class ClusteringVisualizer extends Component {
             return {...data_point};
         });
 
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < this.state.k; i++) {
             var rand_index = Math.floor(Math.random()*centroid_options.length);
             var centroid_option = centroid_options[rand_index];
             console.log(centroid_options);
@@ -299,6 +306,18 @@ export default class ClusteringVisualizer extends Component {
         });
     }
 
+    handleDecrement() {
+        this.setState({
+            k: (this.state.k - 1)
+        }, this.setNewCentroids)
+    }
+
+    handleIncrement() {
+        this.setState({
+            k: (this.state.k + 1)
+        }, this.setNewCentroids)
+    }
+
     render() {
         return (
             <div>
@@ -320,7 +339,29 @@ export default class ClusteringVisualizer extends Component {
                             Run
                         </Button>
                     </div>
+                    {/*<InputGroup className="">
+                        <InputGroup.Prepend>
+                          <Button variant="outline-secondary">-</Button>
+                        </InputGroup.Prepend>
+                        <FormControl aria-describedby="basic-addon1"/>
+                        <InputGroup.Append>
+                          <Button variant="outline-secondary">+</Button>
+                        </InputGroup.Append>
+                    </InputGroup>*/}
                 </Navbar>
+                <InputGroup className="mt-3 px-5">
+                    <InputGroup.Prepend>
+                      <Button variant="outline-secondary" onClick={this.handleDecrement} disabled={this.state.k <= 1}>
+                          -
+                      </Button>
+                    </InputGroup.Prepend>
+                    <FormControl aria-describedby="basic-addon1" value={this.state.k}/>
+                    <InputGroup.Append>
+                      <Button variant="outline-secondary" onClick={this.handleIncrement} disabled={this.state.k >= 10}>
+                          +
+                      </Button>
+                    </InputGroup.Append>
+                </InputGroup>
                 <section>
                     <canvas id="myCanvas" width="750" height="750" onMouseDown={(e) => {
                         const data_points = this.state.data_points.map((data_point) => {
