@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
-import {Navbar, Nav, Container, Row, Col, Button, InputGroup, FormControl} from 'react-bootstrap'
+import {Form, Navbar, Nav, Container, Row, Col, Button, InputGroup, FormControl} from 'react-bootstrap'
+import Animation from '../components/Animation.js';
 import './ClusteringVisualizer.css';
 
 export default class ClusteringVisualizer extends Component {
@@ -9,8 +10,10 @@ export default class ClusteringVisualizer extends Component {
             // make sure all the data points and centroids and stuff are saved here
             data_points : [],
             centroids : [],
+            prev_centroids: [], // for animating purpose
             initial_centroids : [],
-            k: 5
+            animating_centroids : false,
+            k: 3
         };
 
         // initialize refs
@@ -74,17 +77,22 @@ export default class ClusteringVisualizer extends Component {
             return {...centroid};
         });
 
+        const prev_centroids = centroids.map((centroid) => { // this stores a copy of the starting centroids to use on reset
+            return {...centroid};
+        });
+
         this.setState({
             centroids: centroids,
             data_points: data_points,
-            initial_centroids : initial_centroids
+            initial_centroids : initial_centroids,
+            prev_centroids : prev_centroids
         });
     }
 
     componentDidUpdate() {
         // this acts as the draw function
 
-        const data_points = this.state.data_points.slice();
+        /*const data_points = this.state.data_points.slice();
         const centroids = this.state.centroids.slice();
 
         const canvas = document.getElementById('myCanvas');
@@ -99,20 +107,20 @@ export default class ClusteringVisualizer extends Component {
             ctx.fillStyle = cluster_colors[item.id];
             ctx.strokeStyle = cluster_colors[item.id];
 
-            ctx.fillRect(item.x - 5, item.y - 5, 10, 10);
+            ctx.fillRect(item.x - 5, item.y - 5, 10, 10);*/
             /*ctx.beginPath();
             ctx.arc(item.x, item.y, 4, 0, 2 * Math.PI, false);
             ctx.fill();
             ctx.lineWidth = 1;
             ctx.stroke();*/
-        });
+        /*});
 
         ctx.lineWidth = 3;
 
         centroids.forEach((item, i) => {
             ctx.strokeStyle = cluster_colors[item.id];
             ctx.strokeRect(item.x - 7.5, item.y - 7.5, 15, 15);
-        });
+        });*/
     }
 
     resetClusters() { // resets algorithm with original starting centroids
@@ -228,10 +236,12 @@ export default class ClusteringVisualizer extends Component {
             centroid.y = yAvg;
         });
 
-        this.setState({
+        this.setState(prevState => ({
             data_points : data_points,
-            centroids: centroids
-        });
+            centroids : centroids,
+            prev_centroids : prevState.centroids,
+            animating_centroids : true
+        }));
     }
 
     runAlgorithm() {
@@ -321,7 +331,7 @@ export default class ClusteringVisualizer extends Component {
     render() {
         return (
             <div>
-                <Navbar className="custom-navbar" bg="dark" variant="dark">
+                <Navbar className="custom-navbar justify-content-between" bg="dark" variant="dark">
                     <Navbar.Brand>
                         K-means Clustering Visualizer
                     </Navbar.Brand>
@@ -339,31 +349,27 @@ export default class ClusteringVisualizer extends Component {
                             Run
                         </Button>
                     </div>
-                    {/*<InputGroup className="">
-                        <InputGroup.Prepend>
-                          <Button variant="outline-secondary">-</Button>
-                        </InputGroup.Prepend>
-                        <FormControl aria-describedby="basic-addon1"/>
-                        <InputGroup.Append>
-                          <Button variant="outline-secondary">+</Button>
-                        </InputGroup.Append>
-                    </InputGroup>*/}
+                    <Form inline>
+                        <Form.Label className="mr-2 text-white">
+                            Clusters
+                        </Form.Label>
+                        <InputGroup>
+                            <InputGroup.Prepend>
+                              <Button variant="outline-secondary" onClick={this.handleDecrement} disabled={this.state.k <= 1}>
+                                  -
+                              </Button>
+                            </InputGroup.Prepend>
+                            <FormControl aria-describedby="basic-addon1" value={this.state.k}/>
+                            <InputGroup.Append>
+                              <Button variant="outline-secondary" onClick={this.handleIncrement} disabled={this.state.k >= 10}>
+                                  +
+                              </Button>
+                            </InputGroup.Append>
+                        </InputGroup>
+                    </Form>
                 </Navbar>
-                <InputGroup className="mt-3 px-5">
-                    <InputGroup.Prepend>
-                      <Button variant="outline-secondary" onClick={this.handleDecrement} disabled={this.state.k <= 1}>
-                          -
-                      </Button>
-                    </InputGroup.Prepend>
-                    <FormControl aria-describedby="basic-addon1" value={this.state.k}/>
-                    <InputGroup.Append>
-                      <Button variant="outline-secondary" onClick={this.handleIncrement} disabled={this.state.k >= 10}>
-                          +
-                      </Button>
-                    </InputGroup.Append>
-                </InputGroup>
                 <section>
-                    <canvas id="myCanvas" width="750" height="750" onMouseDown={(e) => {
+                    <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} onMouseDown={(e) => {
                         const data_points = this.state.data_points.map((data_point) => {
                             return {...data_point}
                         });
@@ -380,9 +386,7 @@ export default class ClusteringVisualizer extends Component {
                         this.setState({
                             data_points: data_points
                         })
-                        }}>
-                        Your browser does not support the canvas tag.
-                    </canvas>
+                    }}/>
                 </section>
                 <footer className="bg-dark text-muted">
                     <div className="text-center">
