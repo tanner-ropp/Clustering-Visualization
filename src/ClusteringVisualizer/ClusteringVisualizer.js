@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {Form, Navbar, Nav, Container, Row, Col, Button, InputGroup, FormControl} from 'react-bootstrap'
 import Animation from '../components/Animation.js';
+import Dashboard from '../components/Dashboard.js'
 import './ClusteringVisualizer.css';
 
 export default class ClusteringVisualizer extends Component {
@@ -134,10 +135,11 @@ export default class ClusteringVisualizer extends Component {
             return {...centroid}
         });
 
-        this.setState({
+        this.setState(prevState => ({
             data_points: data_points,
-            centroids: initial_centroids
-        });
+            centroids: initial_centroids,
+            prev_centroids: prevState.centroids
+        }));
     }
 
     setNewCentroids() { //resets algorithm with new centroids
@@ -174,11 +176,12 @@ export default class ClusteringVisualizer extends Component {
             return {...centroid};
         });
 
-        this.setState({
+        this.setState(prevState => ({
             data_points: data_points,
             centroids: centroids,
+            prev_centroids: prevState.centroids,
             initial_centroids: initial_centroids
-        });
+        }));
     }
 
     stepThrough() {
@@ -312,7 +315,8 @@ export default class ClusteringVisualizer extends Component {
 
         this.setState({
             data_points : data_points,
-            centroids: centroids
+            centroids: centroids,
+            animating_centroids: false
         });
     }
 
@@ -335,7 +339,7 @@ export default class ClusteringVisualizer extends Component {
                     <Navbar.Brand>
                         K-means Clustering Visualizer
                     </Navbar.Brand>
-                    <div className="button-dashboard">
+                    {/*<div className="button-dashboard">
                         <Button variant="outline-light" onClick={this.resetClusters}>
                             Reset
                         </Button>{' '}
@@ -348,8 +352,8 @@ export default class ClusteringVisualizer extends Component {
                         <Button variant="outline-success" onClick={this.runAlgorithm}>
                             Run
                         </Button>
-                    </div>
-                    <Form inline>
+                    </div>*/}
+                    {/*<Form inline>
                         <Form.Label className="mr-2 text-white">
                             Clusters
                         </Form.Label>
@@ -366,10 +370,10 @@ export default class ClusteringVisualizer extends Component {
                               </Button>
                             </InputGroup.Append>
                         </InputGroup>
-                    </Form>
+                    </Form>*/}
                 </Navbar>
                 <section>
-                    <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} onMouseDown={(e) => {
+                    {/*<Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} onMouseDown={(e) => {
                         const data_points = this.state.data_points.map((data_point) => {
                             return {...data_point}
                         });
@@ -386,8 +390,9 @@ export default class ClusteringVisualizer extends Component {
                         this.setState({
                             data_points: data_points
                         })
-                    }}/>
+                    }}/>*/}
                 </section>
+                <Dashboard/>
                 <footer className="bg-dark text-muted">
                     <div className="text-center">
                         - Tanner Ropp, 2020 -

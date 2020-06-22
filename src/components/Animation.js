@@ -27,7 +27,7 @@ export default class Animation extends Component {
             console.log("ANIMATING");
 
             const new_centroids = this.props.centroids;
-            //const prev_centroids = this.props.prevCentroids;
+            const prev_centroids = this.props.prevCentroids;
 
 
 
@@ -36,7 +36,15 @@ export default class Animation extends Component {
                 const dy = new_centroids[i].y - item.y;
                 const dist = Math.sqrt((dy*dy)+(dx*dx));
 
-                if (dist < 3) { // this is to prevent vibration
+                // used for speed ramp
+                /*const full_dx = new_centroids[i].x - prev_centroids[i].x;
+                const full_dy = new_centroids[i].y - prev_centroids[i].y;
+                const full_dist = Math.sqrt((full_dy*full_dy)+(full_dx*full_dx));*/
+
+                var speed = 5; // try doing something with trig to make a speed ramp
+                //var speed = Math.abs(6*Math.sin((dist/full_dist)*Math.PI)) + 0.2;
+
+                if (dist < speed) { // this is to prevent vibration
                     return {
                         x: new_centroids[i].x,
                         y: new_centroids[i].y,
@@ -44,8 +52,8 @@ export default class Animation extends Component {
                     }
                 } else {
                     return {
-                        x: item.x + 3*dx/dist,
-                        y: item.y + 3*dy/dist,
+                        x: item.x + speed*dx/dist,
+                        y: item.y + speed*dy/dist,
                         id: item.id
                     }
                 }

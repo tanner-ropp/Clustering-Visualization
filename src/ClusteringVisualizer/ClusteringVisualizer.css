@@ -28,9 +28,9 @@ body {
 }
 
 .button-dashboard {
-    position: absolute;
+    /*position: absolute;
     left: 50%;
-    transform: translatex(-50%);
+    transform: translatex(-50%);*/
 }
 
 footer {
