@@ -3,6 +3,7 @@ import {Form, Navbar, Nav, Container, Row, Col, Button, InputGroup, FormControl}
 import Animation from '../components/Animation.js';
 import Dashboard from '../components/Dashboard.js'
 import './ClusteringVisualizer.css';
+import logo from './ClusterLogo2.png'
 
 export default class ClusteringVisualizer extends Component {
     constructor(props) {
@@ -337,6 +338,13 @@ export default class ClusteringVisualizer extends Component {
             <div>
                 <Navbar className="custom-navbar justify-content-between" bg="dark" variant="dark">
                     <Navbar.Brand>
+                        <img
+                            alt=""
+                            src={logo}
+                            width="30"
+                            height="30"
+                            className="d-inline-block align-top"
+                          />{' '}
                         K-means Clustering Visualizer
                     </Navbar.Brand>
                     {/*<div className="button-dashboard">
@@ -372,27 +380,40 @@ export default class ClusteringVisualizer extends Component {
                         </InputGroup>
                     </Form>*/}
                 </Navbar>
-                <section>
-                    {/*<Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} onMouseDown={(e) => {
-                        const data_points = this.state.data_points.map((data_point) => {
-                            return {...data_point}
-                        });
+                <Container fluid>
+                    <Row className="mt-3 mb-3">
+                        <Col className="justify-content-center">
+                            <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} onMouseDown={(e) => {
+                                const data_points = this.state.data_points.map((data_point) => {
+                                    return {...data_point}
+                                });
 
-                        const canvas = document.getElementById('myCanvas');
-                        var rect = canvas.getBoundingClientRect();
+                                const canvas = document.getElementById('myCanvas');
+                                var rect = canvas.getBoundingClientRect();
 
-                        data_points.push({
-                            x: e.clientX - rect.left - 4, // custom offset to make the square at the point of thr cursor
-                            y: e.clientY - rect.top - 4,
-                            id: 0
-                        });
+                                data_points.push({
+                                    x: e.clientX - rect.left - 4, // custom offset to make the square at the point of thr cursor
+                                    y: e.clientY - rect.top - 4,
+                                    id: 0
+                                });
 
-                        this.setState({
-                            data_points: data_points
-                        })
-                    }}/>*/}
-                </section>
-                <Dashboard/>
+                                this.setState({
+                                    data_points: data_points
+                                })
+                            }}/>
+                        </Col>
+                        <Col className="ml-auto" md={4}>
+                            <Dashboard
+                                k={this.state.k}
+                                stepThrough={this.stepThrough}
+                                resetClusters={this.resetClusters}
+                                runAlgorithm={this.runAlgorithm}
+                                handleDecrement={this.handleDecrement}
+                                handleIncrement={this.handleIncrement}
+                                setNewCentroids={this.setNewCentroids}/>
+                        </Col>
+                    </Row>
+                </Container>
                 <footer className="bg-dark text-muted">
                     <div className="text-center">
                         - Tanner Ropp, 2020 -
