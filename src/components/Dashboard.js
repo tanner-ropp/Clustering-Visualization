@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Container, Row, Col, Button, Form, InputGroup, FormControl} from 'react-bootstrap';
+import {Card, Container, Row, Col, Button, Form, InputGroup, FormControl, Alert} from 'react-bootstrap';
 
 export default class Dashboard extends Component {
     constructor(props) {
@@ -25,6 +25,11 @@ export default class Dashboard extends Component {
                     <Button variant="success" onClick={this.props.runAlgorithm}>
                         Run
                     </Button>
+                    {(!this.props.isValid) &&
+                        <Alert className="mt-1" variant={'danger'}>
+                            You cannot have more clusters than data points!
+                        </Alert>
+                    }
                     <Card.Text>{' '}</Card.Text>
                     <Card.Title>Parameters</Card.Title>
                         <Form style={{width: 125}}>
@@ -45,15 +50,15 @@ export default class Dashboard extends Component {
                                 </InputGroup.Append>
                             </InputGroup>
                         </Form>
-                        <Button className="mt-2"variant="primary" onClick={this.props.setNewCentroids}>
+                        <Button className="mt-2" variant="primary" onClick={this.props.setNewCentroids}>
                             New centroids
                         </Button>{' '}
                     <Card.Text>{' '}</Card.Text>
                     <Card.Title>Dataset</Card.Title>
-                        <Button variant="primary">
+                        <Button variant="primary" onClick={this.props.clearData}>
                             Clear data
                         </Button>{' '}
-                        <Button variant="primary">
+                        <Button variant="primary" onClick={this.props.loadSampleData}>
                             Load sample
                         </Button>{' '}
                     <Card.Text>{' '}</Card.Text>
@@ -63,10 +68,11 @@ export default class Dashboard extends Component {
                                 type="switch"
                                 id="custom-switch"
                                 label="Step animation"
+                                defaultChecked={true}
                                 />
                             <Form.Group controlId="formBasicRangeCustom">
                                 <Form.Label>Speed</Form.Label>
-                                <Form.Control type="range" custom />
+                                <Form.Control type="range" custom min="1" max="15" step="0.01" defaultValue={this.props.speed} onChange={(event) => (this.props.adjustSpeed(event.target.value))}/>
                             </Form.Group>
                         </Form>
                 </Card.Body>

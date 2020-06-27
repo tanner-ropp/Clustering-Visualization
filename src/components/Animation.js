@@ -41,7 +41,7 @@ export default class Animation extends Component {
                 const full_dy = new_centroids[i].y - prev_centroids[i].y;
                 const full_dist = Math.sqrt((full_dy*full_dy)+(full_dx*full_dx));*/
 
-                var speed = 5; // try doing something with trig to make a speed ramp
+                var speed = this.props.speed; // try doing something with trig to make a speed ramp
                 //var speed = Math.abs(6*Math.sin((dist/full_dist)*Math.PI)) + 0.2;
 
                 if (dist < speed) { // this is to prevent vibration

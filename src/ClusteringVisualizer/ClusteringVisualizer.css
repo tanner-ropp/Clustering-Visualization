@@ -33,8 +33,18 @@ body {
     transform: translatex(-50%);*/
 }
 
+.background {
+    background-image: url("background2.png");
+    background-size: contain
+}
+
+section {
+    min-height: calc(100vh - 130px);
+}
+
 footer {
-    padding: 20px
+    padding: 20px;
+    height: 65px
 }
 
 #myCanvas {

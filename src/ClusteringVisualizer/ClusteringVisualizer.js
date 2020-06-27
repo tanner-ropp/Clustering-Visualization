@@ -15,7 +15,9 @@ export default class ClusteringVisualizer extends Component {
             prev_centroids: [], // for animating purpose
             initial_centroids : [],
             animating_centroids : false,
-            k: 3
+            animations_on : true, // for the actual animation switch
+            k: 3,
+            speed: 5
         };
 
         // initialize refs
@@ -28,6 +30,8 @@ export default class ClusteringVisualizer extends Component {
         this.setNewCentroids = this.setNewCentroids.bind(this);
         this.handleDecrement = this.handleDecrement.bind(this);
         this.handleIncrement = this.handleIncrement.bind(this);
+        this.clearData = this.clearData.bind(this);
+        this.loadSampleData = this.loadSampleData.bind(this);
     }
 
     componentDidMount() {
@@ -37,7 +41,7 @@ export default class ClusteringVisualizer extends Component {
 
         const data_points = []; // will hold all data points
 
-        /*for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 100; i++) {
             data_points.push({
                 x: (Math.random() * 400) + 10,
                 y: (Math.random() * 350) + 10,
@@ -59,7 +63,7 @@ export default class ClusteringVisualizer extends Component {
                 y: 740 - (Math.random() * 300),
                 id: 0
             });
-        }*/
+        }
 
 
 
@@ -333,87 +337,107 @@ export default class ClusteringVisualizer extends Component {
         }, this.setNewCentroids)
     }
 
+    clearData() {
+        this.setState({
+            data_points : []
+        });
+    }
+
+    loadSampleData() {
+        this.clearData();
+
+        const data_points = [];
+
+        for (let i = 0; i < 100; i++) {
+            data_points.push({
+                x: (Math.random() * 400) + 10,
+                y: (Math.random() * 350) + 10,
+                id: 0 // represents an unassigned point (just used for initialization)
+            });
+        }
+
+        for (let i = 0; i < 75; i++) {
+            data_points.push({
+                x: 740 - (Math.random() * 200),
+                y: (Math.random() * 350) + 10,
+                id: 0
+            });
+        }
+
+        for (let i = 0; i < 80; i++) {
+            data_points.push({
+                x: 100 + (Math.random() * 500),
+                y: 740 - (Math.random() * 300),
+                id: 0
+            });
+        }
+
+        this.setState({
+            data_points: data_points,
+            k: 3
+        }, this.setNewCentroids);
+    }
+
     render() {
         return (
-            <div>
+            <div className="background">
                 <Navbar className="custom-navbar justify-content-between" bg="dark" variant="dark">
                     <Navbar.Brand>
                         <img
                             alt=""
                             src={logo}
-                            width="30"
-                            height="30"
-                            className="d-inline-block align-top"
+                            width="35"
+                            height="35"
+                            className="d-inline-block align-top mr-1"
                           />{' '}
                         K-means Clustering Visualizer
                     </Navbar.Brand>
-                    {/*<div className="button-dashboard">
-                        <Button variant="outline-light" onClick={this.resetClusters}>
-                            Reset
-                        </Button>{' '}
-                        <Button variant="outline-light" onClick={this.setNewCentroids}>
-                            New Centroids
-                        </Button>{' '}
-                        <Button variant="outline-light" onClick={this.stepThrough}>
-                            Step
-                        </Button>{' '}
-                        <Button variant="outline-success" onClick={this.runAlgorithm}>
-                            Run
-                        </Button>
-                    </div>*/}
-                    {/*<Form inline>
-                        <Form.Label className="mr-2 text-white">
-                            Clusters
-                        </Form.Label>
-                        <InputGroup>
-                            <InputGroup.Prepend>
-                              <Button variant="outline-secondary" onClick={this.handleDecrement} disabled={this.state.k <= 1}>
-                                  -
-                              </Button>
-                            </InputGroup.Prepend>
-                            <FormControl aria-describedby="basic-addon1" value={this.state.k}/>
-                            <InputGroup.Append>
-                              <Button variant="outline-secondary" onClick={this.handleIncrement} disabled={this.state.k >= 10}>
-                                  +
-                              </Button>
-                            </InputGroup.Append>
-                        </InputGroup>
-                    </Form>*/}
                 </Navbar>
-                <Container fluid>
-                    <Row className="mt-3 mb-3">
-                        <Col className="justify-content-center">
-                            <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} onMouseDown={(e) => {
-                                const data_points = this.state.data_points.map((data_point) => {
-                                    return {...data_point}
-                                });
+                <section>
+                    <Container fluid>
+                        <Row className="pt-3 pb-3">
+                            <Col className="text-center">
+                                <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} speed={this.state.speed} onMouseDown={(e) => {
+                                    const data_points = this.state.data_points.map((data_point) => {
+                                        return {...data_point}
+                                    });
 
-                                const canvas = document.getElementById('myCanvas');
-                                var rect = canvas.getBoundingClientRect();
+                                    const canvas = document.getElementById('myCanvas');
+                                    var rect = canvas.getBoundingClientRect();
 
-                                data_points.push({
-                                    x: e.clientX - rect.left - 4, // custom offset to make the square at the point of thr cursor
-                                    y: e.clientY - rect.top - 4,
-                                    id: 0
-                                });
+                                    data_points.push({
+                                        x: e.clientX - rect.left - 4, // custom offset to make the square at the point of thr cursor
+                                        y: e.clientY - rect.top - 4,
+                                        id: 0
+                                    });
 
-                                this.setState({
-                                    data_points: data_points
-                                })
-                            }}/>
-                        </Col>
-                        <Col className="ml-auto" md={4}>
-                            <Dashboard
-                                k={this.state.k}
-                                stepThrough={this.stepThrough}
-                                resetClusters={this.resetClusters}
-                                runAlgorithm={this.runAlgorithm}
-                                handleDecrement={this.handleDecrement}
-                                handleIncrement={this.handleIncrement}
-                                setNewCentroids={this.setNewCentroids}/>
-                        </Col>
-                    </Row>
-                </Container>
+                                    this.setState({
+                                        data_points: data_points
+                                    })
+                                }}/>
+                            </Col>
+                            <Col className="" md={4}>
+                                <Dashboard
+                                    isValid={this.state.k <= this.state.data_points.length}
+                                    k={this.state.k}
+                                    speed={this.state.speed}
+                                    stepThrough={this.stepThrough}
+                                    resetClusters={this.resetClusters}
+                                    runAlgorithm={this.runAlgorithm}
+                                    handleDecrement={this.handleDecrement}
+                                    handleIncrement={this.handleIncrement}
+                                    setNewCentroids={this.setNewCentroids}
+                                    clearData={this.clearData}
+                                    loadSampleData={this.loadSampleData}
+                                    adjustSpeed={(newSpeed) => (
+                                        this.setState({
+                                            speed : newSpeed
+                                        })
+                                    )}/>
+                            </Col>
+                        </Row>
+                    </Container>
+                </section>
                 <footer className="bg-dark text-muted">
                     <div className="text-center">
                         - Tanner Ropp, 2020 -
