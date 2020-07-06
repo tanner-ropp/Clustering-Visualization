@@ -27,15 +27,19 @@ body {
     padding: 10px
 }
 
-.button-dashboard {
-    /*position: absolute;
-    left: 50%;
-    transform: translatex(-50%);*/
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
 }
 
 .background {
     background-image: url("background2.png");
     background-size: contain
+}
+
+.custom-container {
+    max-width: 1300px;
 }
 
 section {
@@ -50,9 +54,8 @@ footer {
 #myCanvas {
     background-color: #FEFEFA;
     border: 3px solid #000000;
-    /*position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);*/
-    /*margin: 40px*/
+    max-height: calc(100vh - 170px);
+    width: 100%;
+    max-width: calc(100vh - 170px);
+    height: auto;
 }
