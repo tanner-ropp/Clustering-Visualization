@@ -393,9 +393,9 @@ export default class ClusteringVisualizer extends Component {
                         K-means Clustering Visualizer
                     </Navbar.Brand>
                 </Navbar>
-                <section>
-                    <Container fluid>
-                        <Row className="pt-3 pb-3">
+                <section className="">
+                    <Container fluid="xl" className="custom-container">
+                        <Row className="pt-3 pb-3 justify-content-md-center">
                             <Col className="text-center">
                                 <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} speed={this.state.speed} onMouseDown={(e) => {
                                     const data_points = this.state.data_points.map((data_point) => {
@@ -404,10 +404,11 @@ export default class ClusteringVisualizer extends Component {
 
                                     const canvas = document.getElementById('myCanvas');
                                     var rect = canvas.getBoundingClientRect();
+                                    console.log(rect.height);
 
                                     data_points.push({
-                                        x: e.clientX - rect.left - 4, // custom offset to make the square at the point of thr cursor
-                                        y: e.clientY - rect.top - 4,
+                                        x: (e.clientX - rect.left - 4)*(750/rect.width), // custom offset to make the square at the point of thr cursor
+                                        y: (e.clientY - rect.top - 4)*(750/rect.height),
                                         id: 0
                                     });
 
@@ -416,7 +417,7 @@ export default class ClusteringVisualizer extends Component {
                                     })
                                 }}/>
                             </Col>
-                            <Col className="" md={4}>
+                            <Col className="my-auto" md={4}>
                                 <Dashboard
                                     isValid={this.state.k <= this.state.data_points.length}
                                     k={this.state.k}
