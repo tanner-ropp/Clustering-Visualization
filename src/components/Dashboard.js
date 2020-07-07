@@ -69,6 +69,8 @@ export default class Dashboard extends Component {
                                 id="custom-switch"
                                 label="Step animation"
                                 defaultChecked={true}
+                                checked={this.props.animations}
+                                onChange={this.props.toggleAnimations}
                                 />
                             <Form.Group controlId="formBasicRangeCustom">
                                 <Form.Label>Speed</Form.Label>

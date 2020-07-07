@@ -96,6 +96,7 @@ export default class ClusteringVisualizer extends Component {
     }
 
     componentDidUpdate() {
+        console.log(this.state.animations_on);
         // this acts as the draw function
 
         /*const data_points = this.state.data_points.slice();
@@ -130,7 +131,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     resetClusters() { // resets algorithm with original starting centroids
-        console.log("reset");
 
         const data_points = this.state.data_points.map((data_point) => {
             return Object.assign({}, data_point, {id: 0});
@@ -148,7 +148,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     setNewCentroids() { //resets algorithm with new centroids
-        console.log("new centroids");
 
         const data_points = this.state.data_points.map((data_point) => {
             return Object.assign({}, data_point, {id: 0});
@@ -190,8 +189,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     stepThrough() {
-        console.log("STEP");
-
         // k-means algorithm step
 
         let distance = (pos1, pos2) => {
@@ -253,8 +250,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     runAlgorithm() {
-        console.log("RUN");
-
         // k-means algorithm
 
         let distance = (pos1, pos2) => {
@@ -397,7 +392,14 @@ export default class ClusteringVisualizer extends Component {
                     <Container fluid="xl" className="custom-container">
                         <Row className="pt-3 pb-3 justify-content-md-center">
                             <Col className="text-center">
-                                <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} speed={this.state.speed} onMouseDown={(e) => {
+                                <Animation
+                                    animations={this.state.animations_on}
+                                    animating={this.state.animating_centroids}
+                                    dataPoints={this.state.data_points}
+                                    centroids={this.state.centroids}
+                                    prevCentroids={this.state.prev_centroids}
+                                    speed={this.state.speed}
+                                    onMouseDown={(e) => {
                                     const data_points = this.state.data_points.map((data_point) => {
                                         return {...data_point}
                                     });
@@ -430,6 +432,12 @@ export default class ClusteringVisualizer extends Component {
                                     setNewCentroids={this.setNewCentroids}
                                     clearData={this.clearData}
                                     loadSampleData={this.loadSampleData}
+                                    animations={this.state.animations_on}
+                                    toggleAnimations={() => (
+                                        this.setState({
+                                            animations_on: !this.state.animations_on
+                                        })
+                                    )}
                                     adjustSpeed={(newSpeed) => (
                                         this.setState({
                                             speed : newSpeed

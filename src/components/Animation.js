@@ -23,7 +23,7 @@ export default class Animation extends Component {
     componentDidUpdate() {}
 
     updateAnimationState() {
-        if (this.props.animating) {
+        if (this.props.animations && this.props.animating) {
             console.log("ANIMATING");
 
             const new_centroids = this.props.centroids;
@@ -61,7 +61,6 @@ export default class Animation extends Component {
             this.setState({centroids: updated_centroids})
         } else { // not animating
             this.setState({centroids: this.props.centroids}) // this seems to make the state store the previosu centroid when step is called
-            console.log("NOT ANIMATING")
         }
         //this.setState(prevState => ({centroids: updated_centroids}));
         this.rAF = requestAnimationFrame(this.updateAnimationState);
