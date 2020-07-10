@@ -27,7 +27,7 @@ export default class Animation extends Component {
             console.log("ANIMATING");
 
             const new_centroids = this.props.centroids;
-            const prev_centroids = this.props.prevCentroids;
+            //const prev_centroids = this.props.prevCentroids;
 
             var finished = true;
 

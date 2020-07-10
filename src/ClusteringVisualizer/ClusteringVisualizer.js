@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Form, Navbar, Nav, Container, Row, Col, Button, InputGroup, FormControl} from 'react-bootstrap'
+import {Navbar, Nav, Container, Row, Col} from 'react-bootstrap'
 import Animation from '../components/Animation.js';
 import Dashboard from '../components/Dashboard.js'
 import './ClusteringVisualizer.css';
@@ -433,7 +433,7 @@ export default class ClusteringVisualizer extends Component {
 
                                     this.setState({
                                         data_points: data_points
-                                    }, data_points.length == 1 ? this.setNewCentroids : null)
+                                    }, data_points.length === 1 ? this.setNewCentroids : null)
                                 }}/>
                             </Col>
                             <Col className="my-auto" md={4}>

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Container, Row, Col, Button, Form, InputGroup, FormControl, Alert} from 'react-bootstrap';
+import {Card, Button, Form, InputGroup, FormControl} from 'react-bootstrap';
 
 export default class Dashboard extends Component {
     constructor(props) {
@@ -62,7 +62,7 @@ export default class Dashboard extends Component {
                             Load sample
                         </Button>{' '}
                         <br/>
-                        {(this.props.numPoints == 0) &&
+                        {(this.props.numPoints === 0) &&
                             <i style={{color: 'Crimson'}}>Click the visualization window to add data points</i> ||
                                 <i>Click the visualization window to add data points</i>
                         }
