@@ -387,7 +387,7 @@ export default class ClusteringVisualizer extends Component {
     render() {
         return (
             <div className="background">
-                <Navbar className="custom-navbar justify-content-between" bg="dark" variant="dark">
+                <Navbar className="custom-navbar" bg="dark" variant="dark" expand="sm">
                     <Navbar.Brand>
                         <img
                             alt=""
@@ -398,9 +398,12 @@ export default class ClusteringVisualizer extends Component {
                           />{' '}
                         K-means Clustering Visualizer
                     </Navbar.Brand>
-                    <Nav>
-                      <Nav.Link href="https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a">More about K-means -></Nav.Link>
-                    </Nav>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse className="justify-content-end">
+                        <Nav>
+                          <Nav.Link href="https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a">More about K-means -></Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
                 </Navbar>
                 <section className="">
                     <Container fluid="xl" className="custom-container">
