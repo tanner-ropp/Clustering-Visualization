@@ -17,7 +17,9 @@ export default class ClusteringVisualizer extends Component {
             animating_centroids : false,
             animations_on : true, // for the actual animation switch
             k: 3,
-            speed: 5
+            speed: 5,
+            running: false,
+            stepping : false
         };
 
         // initialize refs
@@ -92,10 +94,11 @@ export default class ClusteringVisualizer extends Component {
             data_points: data_points,
             initial_centroids : initial_centroids,
             prev_centroids : prev_centroids
-        });
+        }, this.setNewCentroids);
     }
 
     componentDidUpdate() {
+        console.log(this.state.animations_on);
         // this acts as the draw function
 
         /*const data_points = this.state.data_points.slice();
@@ -130,7 +133,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     resetClusters() { // resets algorithm with original starting centroids
-        console.log("reset");
 
         const data_points = this.state.data_points.map((data_point) => {
             return Object.assign({}, data_point, {id: 0});
@@ -143,12 +145,14 @@ export default class ClusteringVisualizer extends Component {
         this.setState(prevState => ({
             data_points: data_points,
             centroids: initial_centroids,
-            prev_centroids: prevState.centroids
+            prev_centroids: prevState.centroids,
+            running: false,
+            stepping : false,
+            animating_centroids: false
         }));
     }
 
     setNewCentroids() { //resets algorithm with new centroids
-        console.log("new centroids");
 
         const data_points = this.state.data_points.map((data_point) => {
             return Object.assign({}, data_point, {id: 0});
@@ -190,8 +194,6 @@ export default class ClusteringVisualizer extends Component {
     }
 
     stepThrough() {
-        console.log("STEP");
-
         // k-means algorithm step
 
         let distance = (pos1, pos2) => {
@@ -248,13 +250,13 @@ export default class ClusteringVisualizer extends Component {
             data_points : data_points,
             centroids : centroids,
             prev_centroids : prevState.centroids,
-            animating_centroids : true
+            animating_centroids : true,
+            running: true,
+            stepping : true
         }));
     }
 
     runAlgorithm() {
-        console.log("RUN");
-
         // k-means algorithm
 
         let distance = (pos1, pos2) => {
@@ -339,7 +341,11 @@ export default class ClusteringVisualizer extends Component {
 
     clearData() {
         this.setState({
-            data_points : []
+            data_points : [],
+            k: 1,
+            centroids : [],
+            prev_centroids : [],
+            animating_centroids : false
         });
     }
 
@@ -392,12 +398,25 @@ export default class ClusteringVisualizer extends Component {
                           />{' '}
                         K-means Clustering Visualizer
                     </Navbar.Brand>
+                    <Nav>
+                      <Nav.Link href="https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a">More about K-means -></Nav.Link>
+                    </Nav>
                 </Navbar>
                 <section className="">
                     <Container fluid="xl" className="custom-container">
                         <Row className="pt-3 pb-3 justify-content-md-center">
                             <Col className="text-center">
-                                <Animation animating={this.state.animating_centroids} dataPoints={this.state.data_points} centroids={this.state.centroids} prevCentroids={this.state.prev_centroids} speed={this.state.speed} onMouseDown={(e) => {
+                                <Animation
+                                    animations={this.state.animations_on}
+                                    animating={this.state.animating_centroids}
+                                    dataPoints={this.state.data_points}
+                                    centroids={this.state.centroids}
+                                    prevCentroids={this.state.prev_centroids}
+                                    speed={this.state.speed}
+                                    endStepping={() => {
+                                        this.setState({stepping : false})
+                                    }}
+                                    onMouseDown={(e) => {
                                     const data_points = this.state.data_points.map((data_point) => {
                                         return {...data_point}
                                     });
@@ -414,12 +433,13 @@ export default class ClusteringVisualizer extends Component {
 
                                     this.setState({
                                         data_points: data_points
-                                    })
+                                    }, data_points.length == 1 ? this.setNewCentroids : null)
                                 }}/>
                             </Col>
                             <Col className="my-auto" md={4}>
                                 <Dashboard
                                     isValid={this.state.k <= this.state.data_points.length}
+                                    numPoints={this.state.data_points.length}
                                     k={this.state.k}
                                     speed={this.state.speed}
                                     stepThrough={this.stepThrough}
@@ -430,6 +450,14 @@ export default class ClusteringVisualizer extends Component {
                                     setNewCentroids={this.setNewCentroids}
                                     clearData={this.clearData}
                                     loadSampleData={this.loadSampleData}
+                                    animations={this.state.animations_on}
+                                    running={this.state.running}
+                                    stepping={this.state.stepping}
+                                    toggleAnimations={() => (
+                                        this.setState({
+                                            animations_on: !this.state.animations_on
+                                        })
+                                    )}
                                     adjustSpeed={(newSpeed) => (
                                         this.setState({
                                             speed : newSpeed

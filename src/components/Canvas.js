@@ -31,7 +31,7 @@ export default class Canvas extends Component {
         ctx.fillRect(item.x - 5, item.y - 5, 10, 10);
     });
 
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 5;
 
     centroids.forEach((item, i) => {
         ctx.strokeStyle = cluster_colors[item.id];
