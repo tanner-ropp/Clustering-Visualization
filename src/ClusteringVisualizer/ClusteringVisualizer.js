@@ -17,7 +17,7 @@ export default class ClusteringVisualizer extends Component {
             animating_centroids : false,
             animations_on : true, // for the actual animation switch
             k: 3,
-            speed: 5,
+            speed: 3,
             running: false,
             stepping : false
         };
@@ -387,7 +387,7 @@ export default class ClusteringVisualizer extends Component {
     render() {
         return (
             <div className="background">
-                <Navbar className="custom-navbar justify-content-between" bg="dark" variant="dark">
+                <Navbar className="custom-navbar" bg="dark" variant="dark" expand="sm">
                     <Navbar.Brand>
                         <img
                             alt=""
@@ -398,9 +398,12 @@ export default class ClusteringVisualizer extends Component {
                           />{' '}
                         K-means Clustering Visualizer
                     </Navbar.Brand>
-                    <Nav>
-                      <Nav.Link href="https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a">More about K-means -></Nav.Link>
-                    </Nav>
+                    <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+                    <Navbar.Collapse className="justify-content-end">
+                        <Nav>
+                          <Nav.Link href="https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a">More about K-means -></Nav.Link>
+                        </Nav>
+                    </Navbar.Collapse>
                 </Navbar>
                 <section className="">
                     <Container fluid="xl" className="custom-container">
@@ -413,6 +416,7 @@ export default class ClusteringVisualizer extends Component {
                                     centroids={this.state.centroids}
                                     prevCentroids={this.state.prev_centroids}
                                     speed={this.state.speed}
+                                    running={this.state.running}
                                     endStepping={() => {
                                         this.setState({stepping : false})
                                     }}
