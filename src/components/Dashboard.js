@@ -19,7 +19,7 @@ export default class Dashboard extends Component {
                     <Button variant="primary" onClick={this.props.resetClusters} disabled={this.props.numPoints < 1}>
                         Reset
                     </Button>{' '}
-                    <Button variant="primary" onClick={this.props.stepThrough} disabled={this.props.numPoints < 1}>
+                    <Button variant="primary" onClick={this.props.stepThrough} disabled={this.props.numPoints < 1 || this.props.stepping}>
                         Step
                     </Button>{' '}
                     <Button variant="success" onClick={this.props.runAlgorithm} disabled={this.props.numPoints < 1}>
@@ -38,19 +38,19 @@ export default class Dashboard extends Component {
                             </Form.Label>
                             <InputGroup>
                                 <InputGroup.Prepend>
-                                  <Button variant="primary" onClick={this.props.handleDecrement} disabled={this.props.k <= 1}>
+                                  <Button variant="primary" onClick={this.props.handleDecrement} disabled={this.props.k <= 1 || this.props.running}>
                                       -
                                   </Button>
                                 </InputGroup.Prepend>
                                 <FormControl aria-describedby="basic-addon1" value={this.props.k}/>
                                 <InputGroup.Append>
-                                  <Button variant="primary" onClick={this.props.handleIncrement} disabled={this.props.k >= 10 || this.props.k >= this.props.numPoints}>
+                                  <Button variant="primary" onClick={this.props.handleIncrement} disabled={this.props.k >= 10 || this.props.k >= this.props.numPoints || this.props.running}>
                                       +
                                   </Button>
                                 </InputGroup.Append>
                             </InputGroup>
                         </Form>
-                        <Button className="mt-2" variant="primary" onClick={this.props.setNewCentroids} disabled={this.props.numPoints < 1}>
+                        <Button className="mt-2" variant="primary" onClick={this.props.setNewCentroids} disabled={this.props.numPoints < 1 || this.props.running}>
                             New centroids
                         </Button>{' '}
                     <Card.Text>{' '}</Card.Text>

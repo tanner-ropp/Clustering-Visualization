@@ -29,7 +29,7 @@ export default class Animation extends Component {
             const new_centroids = this.props.centroids;
             const prev_centroids = this.props.prevCentroids;
 
-
+            var finished = true;
 
             const updated_centroids = this.state.centroids.map((item, i) => {
                 const dx = new_centroids[i].x - item.x;
@@ -51,6 +51,7 @@ export default class Animation extends Component {
                         id: item.id
                     }
                 } else {
+                    finished = false;
                     return {
                         x: item.x + speed*dx/dist,
                         y: item.y + speed*dy/dist,
@@ -58,6 +59,8 @@ export default class Animation extends Component {
                     }
                 }
             })
+
+            if (finished) {this.props.endStepping()}
             this.setState({centroids: updated_centroids})
         } else { // not animating
             this.setState({centroids: this.props.centroids}) // this seems to make the state store the previosu centroid when step is called

@@ -17,7 +17,9 @@ export default class ClusteringVisualizer extends Component {
             animating_centroids : false,
             animations_on : true, // for the actual animation switch
             k: 3,
-            speed: 5
+            speed: 5,
+            running: false,
+            stepping : false
         };
 
         // initialize refs
@@ -143,7 +145,10 @@ export default class ClusteringVisualizer extends Component {
         this.setState(prevState => ({
             data_points: data_points,
             centroids: initial_centroids,
-            prev_centroids: prevState.centroids
+            prev_centroids: prevState.centroids,
+            running: false,
+            stepping : false,
+            animating_centroids: false
         }));
     }
 
@@ -245,7 +250,9 @@ export default class ClusteringVisualizer extends Component {
             data_points : data_points,
             centroids : centroids,
             prev_centroids : prevState.centroids,
-            animating_centroids : true
+            animating_centroids : true,
+            running: true,
+            stepping : true
         }));
     }
 
@@ -391,6 +398,9 @@ export default class ClusteringVisualizer extends Component {
                           />{' '}
                         K-means Clustering Visualizer
                     </Navbar.Brand>
+                    <Nav>
+                      <Nav.Link href="https://towardsdatascience.com/k-means-clustering-algorithm-applications-evaluation-methods-and-drawbacks-aa03e644b48a">More about K-means -></Nav.Link>
+                    </Nav>
                 </Navbar>
                 <section className="">
                     <Container fluid="xl" className="custom-container">
@@ -403,6 +413,9 @@ export default class ClusteringVisualizer extends Component {
                                     centroids={this.state.centroids}
                                     prevCentroids={this.state.prev_centroids}
                                     speed={this.state.speed}
+                                    endStepping={() => {
+                                        this.setState({stepping : false})
+                                    }}
                                     onMouseDown={(e) => {
                                     const data_points = this.state.data_points.map((data_point) => {
                                         return {...data_point}
@@ -438,6 +451,8 @@ export default class ClusteringVisualizer extends Component {
                                     clearData={this.clearData}
                                     loadSampleData={this.loadSampleData}
                                     animations={this.state.animations_on}
+                                    running={this.state.running}
+                                    stepping={this.state.stepping}
                                     toggleAnimations={() => (
                                         this.setState({
                                             animations_on: !this.state.animations_on
