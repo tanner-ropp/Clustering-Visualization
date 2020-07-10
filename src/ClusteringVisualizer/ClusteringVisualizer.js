@@ -92,7 +92,7 @@ export default class ClusteringVisualizer extends Component {
             data_points: data_points,
             initial_centroids : initial_centroids,
             prev_centroids : prev_centroids
-        });
+        }, this.setNewCentroids);
     }
 
     componentDidUpdate() {
@@ -334,7 +334,11 @@ export default class ClusteringVisualizer extends Component {
 
     clearData() {
         this.setState({
-            data_points : []
+            data_points : [],
+            k: 1,
+            centroids : [],
+            prev_centroids : [],
+            animating_centroids : false
         });
     }
 
@@ -416,12 +420,13 @@ export default class ClusteringVisualizer extends Component {
 
                                     this.setState({
                                         data_points: data_points
-                                    })
+                                    }, data_points.length == 1 ? this.setNewCentroids : null)
                                 }}/>
                             </Col>
                             <Col className="my-auto" md={4}>
                                 <Dashboard
                                     isValid={this.state.k <= this.state.data_points.length}
+                                    numPoints={this.state.data_points.length}
                                     k={this.state.k}
                                     speed={this.state.speed}
                                     stepThrough={this.stepThrough}
