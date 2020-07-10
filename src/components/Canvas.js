@@ -42,7 +42,7 @@ export default class Canvas extends Component {
 
   render() {
     return (
-        <canvas id="myCanvas" width="750" height="750" ref={this.canvasRef} onMouseDown={this.props.onMouseDown}>
+        <canvas id="myCanvas" width="750" height="750" ref={this.canvasRef} onMouseDown={!this.props.running ? this.props.onMouseDown : null}>
             Your browser does not support the canvas tag.
         </canvas>
     );

@@ -17,7 +17,7 @@ export default class ClusteringVisualizer extends Component {
             animating_centroids : false,
             animations_on : true, // for the actual animation switch
             k: 3,
-            speed: 5,
+            speed: 3,
             running: false,
             stepping : false
         };
@@ -416,6 +416,7 @@ export default class ClusteringVisualizer extends Component {
                                     centroids={this.state.centroids}
                                     prevCentroids={this.state.prev_centroids}
                                     speed={this.state.speed}
+                                    running={this.state.running}
                                     endStepping={() => {
                                         this.setState({stepping : false})
                                     }}
