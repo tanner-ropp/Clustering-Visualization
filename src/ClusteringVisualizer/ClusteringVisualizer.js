@@ -323,7 +323,8 @@ export default class ClusteringVisualizer extends Component {
         this.setState({
             data_points : data_points,
             centroids: centroids,
-            animating_centroids: false
+            animating_centroids: false,
+            running: true
         });
     }
 
@@ -345,7 +346,9 @@ export default class ClusteringVisualizer extends Component {
             k: 1,
             centroids : [],
             prev_centroids : [],
-            animating_centroids : false
+            animating_centroids : false,
+            running: false,
+            stepping: false
         });
     }
 
@@ -380,7 +383,9 @@ export default class ClusteringVisualizer extends Component {
 
         this.setState({
             data_points: data_points,
-            k: 3
+            k: 3,
+            running: false,
+            stepping: false
         }, this.setNewCentroids);
     }
 
